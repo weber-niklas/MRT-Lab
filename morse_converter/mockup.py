@@ -18,6 +18,7 @@ sentence = sentence.upper()
 # 2
 # TODO input whole alphabet
 # Later: Signals with enumerations
+# OR: declare functions before and store them as values in list
 alph_signals: dict = {"A": [0, 1], "B": [1, 0, 0, 0], " ": [2]}
 
 # 3
@@ -42,5 +43,6 @@ for signal in signals:
         long_signal()
     elif signal == 2:
         sleep(0.2)
+
 
 
