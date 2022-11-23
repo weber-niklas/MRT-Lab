@@ -4,7 +4,7 @@
 # 2. Dictionary assigning signals -> letters
 # 3. Convert input into signal
 # 4. Output Signal
-#Louis Test 1
+#Louis Test 12
 
 from time import sleep
 # 1
