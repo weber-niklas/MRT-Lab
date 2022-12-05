@@ -7,7 +7,6 @@ led = Pin(25, Pin.OUT)
 word = input("Was möchten Sie ausgeben? \n")
 word = word.upper()
 
-
 def greenLightOn():       # 0 --> short;
     print("Green on!")
     led.value(1)
