@@ -1,0 +1,12 @@
+Eingabeüberprüfung
+-keine Zahlen
+-keine Sonderzeichen
+
+string.isalnum() --> überprüft, ob String nur Buchstaben enthält (Leerzeichen gehört nicht dazu!)
+string.isdecimal() --> überprüft, ob String nur Dezimalzahlen enthält
+
+
+
+
+
+string.isnumeric() --> überprüft, ob String Zahlen enthält
