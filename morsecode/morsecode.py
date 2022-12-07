@@ -32,6 +32,7 @@ def checkString(Str):
         else:
             print("Error occured. False input. Try again.")
             word=input("What would you like to send? \n")
+            word = word.upper()
 
 def greenLightOn():       # 0 --> short;
     print("Green on!")
