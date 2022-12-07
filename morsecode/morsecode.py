@@ -22,12 +22,13 @@ def checkString(Str):
     while condition == True:
         global condition
         global word
+
         check_string = word.replace(" ","")
         print(check_string)
 
         if(check_string.isalpha()):
             print("Valid input.")
-            condition = True
+            condition = False
         else:
             print("Error occured. False input. Try again.")
             word=input("What would you like to send? \n")
