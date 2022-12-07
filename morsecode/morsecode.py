@@ -20,7 +20,6 @@ word = word.upper()
 def checkString(Str):
     
     while condition == True:
-        global condition
         global word
 
         check_string = word.replace(" ","")
@@ -28,7 +27,7 @@ def checkString(Str):
 
         if(check_string.isalpha()):
             print("Valid input.")
-            condition = False
+            break
         else:
             print("Error occured. False input. Try again.")
             word=input("What would you like to send? \n")
@@ -63,5 +62,5 @@ for char in word:
         elif signal == 1:
             redLightOn()
         elif signal == 2:
-            sleep(0.2)
+            sleep(1)
 
