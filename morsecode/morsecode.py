@@ -12,14 +12,25 @@ letters: dict =    {"A": [0,1], "B": [1,0,0,0], "C": [1,0,1,0], "D": [1,0,0], "E
                     "V": [0,0,0,1], "W": [0,1,1], "X": [1,0,0,1], "Y": [1,0,1,1], "Z": [1,1,0,0], " ": [2],
                     "Ä": [0,1,0,1], "Ö": [0,0,0,1], "Ü": [0,0,1,1]}
 
-def checkString(Str):
-    check_string = word.replace(" ","")
-    print(check_string)
 
-    if(check_string.isalpha()):
-        print("Valid input.")
-    else:
-        print("Error occured. False input. Try again.")
+word = input("What would you like to send? \n")
+word = word.upper()
+
+
+def checkString(Str):
+    
+    while condition == True:
+        global condition
+        global word
+        check_string = word.replace(" ","")
+        print(check_string)
+
+        if(check_string.isalpha()):
+            print("Valid input.")
+            condition = True
+        else:
+            print("Error occured. False input. Try again.")
+            word=input("What would you like to send? \n")
 
 def greenLightOn():       # 0 --> short;
     print("Green on!")
@@ -36,11 +47,8 @@ def redLightOn():         # 1-->long
     sleep(0.2)
 
 
-word = input("Was möchten Sie ausgeben? \n")
-word = word.upper() 
 
-while condition==True:
-
+checkString(word) 
 
 for char in word:
     print(letters[char])
