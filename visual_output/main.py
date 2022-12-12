@@ -155,7 +155,7 @@ def main():
                 print(lastValid)
 
                 if lastValid:
-                    lastText = lastText.replace("+", " ")
+                    lastText = tempText.replace("+", " ")
                     lastText = tempText.upper()
                 else:
                     lastText = ""
@@ -188,6 +188,6 @@ def handle_interrupt(pin):
     if executing:
         main()
 
+button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
 while True:
-    button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
     sleep(0.001)
