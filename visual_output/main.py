@@ -41,7 +41,6 @@ def long():  # 1-->long
 def wait():
     sleep(1)
 
-
 def lightError():
     led_red.value(1)
     sleep(3)
@@ -145,7 +144,10 @@ while True:
             ]
             # a bit of manipulation (no spaces... implemented)
             check_tempText = tempText.replace(" ", "")
+            print(check_tempText)
             lastValid = checkString(check_tempText)
+            print(lastValid)
+
             if lastValid:
                 lastText = tempText.upper()
             else:
