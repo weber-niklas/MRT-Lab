@@ -6,6 +6,7 @@ Pico - Morse Code
 from time import sleep
 from machine import Pin
 import network, socket
+import sys
 
 # morse function
 def morseOutput(word):
@@ -54,7 +55,7 @@ button = Pin(16, Pin.IN)
 
 def handle_interrupt(pin):
     print("Exiting")
-    quit()
+    sys.exit()
 
 button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
 
