@@ -50,7 +50,12 @@ def lightError():
 # init LED
 led_red = Pin(14, Pin.OUT)
 led_green = Pin(15, Pin.OUT)
-condition = True
+button = Pin(16, Pin.IN)
+
+def handle_interrupt(pin):
+    exit()
+    
+button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
 
 # init Dict
 letters: dict = {
@@ -136,12 +141,15 @@ while True:
     try:
         request = conn.recv(1024)
         reqText = str(request)
+
         # if input is submitted (else the find returns -1)
         if reqText.find("/?input=") + 1:
+
             # extract the input from recieved
             tempText = reqText[
                 (reqText.find("/?input=") + 9) : (reqText.find(" HTTP/1.1"))
             ]
+
             # a bit of manipulation (no spaces... implemented)
             check_tempText = tempText.replace("+", "")
             print(check_tempText)
@@ -162,11 +170,13 @@ while True:
         )  # HTTP status line and header
         conn.send(html)
         conn.close()
+        
         # the LAST VALID text is morsed
         if lastValid:
             morseOutput(lastText)
         else:
             lightError()
+
     except OSError:
         conn.close()
         print("Error occured")
