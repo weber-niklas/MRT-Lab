@@ -53,8 +53,9 @@ led_green = Pin(15, Pin.OUT)
 button = Pin(16, Pin.IN)
 
 def handle_interrupt(pin):
+    print("Exiting")
     exit()
-    
+
 button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
 
 # init Dict
