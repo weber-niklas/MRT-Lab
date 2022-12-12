@@ -1,19 +1,33 @@
-# MRT Lab
-Working repository for MRT Lab group 3.
+# MRT 1 - Praktikum Versuch 1: Morsealphabet
 
-## Content
-- Lab 1: [morsecode converter](https://github.com/weber-niklas/MRT-Lab/tree/main/morse_converter)
+## Aufgabenstellung
+*Es ist ein Programm in Micropython für Raspberry Pi Pico W zu schreiben, welches
+eine Zeichenkette als Morsecode ausgibt. Die Zeichenkette soll dabei aus den
+aneinander gereihten Familiennahmen der Gruppenmitglieder bestehen.*
 
-## Setup
+*Für die Ausgabe der Morsezeichen sind die vorhandenen LEDs wie folgt zu nutzen:*
+- *LED rot: Darstellung eines Striches (-) (Länge: 0,5s)*
+- *LED grün: Darstellung eines Punktes (.) (Länge: 0,1s)*
+- *Pause: Zwischenraum zwischen Zeichen (Länge: 0,2s).*
 
-- Install [Git](https://git-scm.com/downloads)
-    1. Open your command shell
-    2. Set your username: `git config --global user.name "FIRST_NAME LAST_NAME"`
-    3. Set your email: `git config --global user.email "example@email.com"`
-    4. Make this change to your settings: `git config --global pull.rebase true`
-    5. Optional: Download the git extensions for VS-Code (helps a lot)
-    6. For more info on git read [this](https://www.w3schools.com/git/)
-- Download the newest version of [Python](https://www.python.org/downloads/)
-- Clone this repository:
-    1. Open your command shell where you would like to create the working directory
-    2. Run ```git clone https://github.com/weber-niklas/MRT-Lab.git``` (https) or ```git clone git@github.com:weber-niklas/MRT-Lab.git``` (ssh)
+*Die Namen sollen über die Thonny-Console mittels Tastatur eingegeben werden
+können. Mittels mitgeliefertem Taster soll der Ablauf auf dem Raspberry Pi Pico
+gestartet (erster Tastendruck) und wieder beendet (zweiter Tastendruck) werden.*
+
+---
+
+An dieser Stelle wurde die Aufgabenstellung leicht **modifiziert**. Der Pi wurde als Wireless Access Point konfiguriert und stellt eine Weboberfläche zur verfügung, die in jedem gängigen Browser geöffnet und bedient werden kann. Das ermöglicht eine kabellose und plattformunabhängige Kommunikation, für die keinerlei zusätzliche Software (Thonny oder VS-Code...) benötigt wird. Selbst mit einem Smartphone kann so gemorst werden. Inspiration bot dabei der in der Vorlesung gezeigte Quelltext.
+
+## Umsetzung
+### Hardware
+Für die Realisierung der Hardware wurden zwei LEDs mit einem Vorwiderstand auf einen Output-Pin geschaltet. Sollen die LEDs eingeschaltet werden, wird der Pin auf 1 (ca. 3 V) gesetzt. Die LED leuchtet.
+Der Taster zum Sarten des Programmes wurde mit einem Pull-Down Widerstand beschaltet. Generell liegt also eine 0 (0V) am Input-Pin an. Wird der Button betätigt ändert sich das Potenzial zu einer 1 (ca. 3 V).
+
+### Software
+#### Netzwerkkommunikation
+Henning
+#### Morsecode / Stringmanipulation
+Louis / Magda
+#### Hardwaresteuerung
+Niklas/ Henning
+
