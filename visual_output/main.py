@@ -54,7 +54,7 @@ button = Pin(16, Pin.IN)
 
 def handle_interrupt(pin):
     print("Exiting")
-    exit()
+    quit()
 
 button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
 
