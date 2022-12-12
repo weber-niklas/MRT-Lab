@@ -109,26 +109,28 @@ WEBSITE = """<!DOCTYPE html>
 """
 
 
+wap = network.WLAN(network.AP_IF)
+wap.config(essid=SSID, password=PASS)
+
+ip = wap.ifconfig()[0]
+
+# give user IP and PORT (to enter in Browser and access UI)
+print("IP-Address: " + str(ip))
+print("Port: " + str(PORT))
+
+# init Socket
+sock = socket.socket()
+sock.bind((ip, PORT))
+
 def main():
-    # configure WAP
-    wap = network.WLAN(network.AP_IF)
-    wap.config(essid=SSID, password=PASS)
-    wap.active(True)
-
-    ip = wap.ifconfig()[0]
-
-    # give user IP and PORT (to enter in Browser and access UI)
-    print("IP-Address: " + str(ip))
-    print("Port: " + str(PORT))
-
-    # init Socket
-    sock = socket.socket()
-    sock.bind((ip, PORT))
-    sock.listen()
-
     # init UI-vars
     lastText = ""
     lastValid = False
+
+    # configure WAP
+    wap.active(True)
+    sock.listen()
+
     while True:
         try:
             conn, addr = sock.accept()
@@ -187,6 +189,8 @@ def handle_interrupt(pin):
 
     if executing:
         main()
+    else:
+        wap.active(False)
 
 button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
 while True:
