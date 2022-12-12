@@ -143,12 +143,13 @@ while True:
                 (reqText.find("/?input=") + 9) : (reqText.find(" HTTP/1.1"))
             ]
             # a bit of manipulation (no spaces... implemented)
-            check_tempText = tempText.replace(" ", "")
+            check_tempText = tempText.replace("+", "")
             print(check_tempText)
             lastValid = checkString(check_tempText)
             print(lastValid)
 
             if lastValid:
+                lastText = lastText.replace("+", " ")
                 lastText = tempText.upper()
             else:
                 lastText = ""
