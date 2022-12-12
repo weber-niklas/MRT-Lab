@@ -188,4 +188,6 @@ def handle_interrupt(pin):
     if executing:
         main()
 
-button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
+while True:
+    button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
+    sleep(0.001)
