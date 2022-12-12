@@ -7,59 +7,89 @@ from time import sleep
 from machine import Pin
 import network, socket
 
-#morse function
+# morse function
 def morseOutput(word):
     for char in word:
-        print(letters[char])
-
         for signal in letters[char]:
-            print(signal)
+            signal()
 
-            if signal == 0:
-                greenLightOn()
-            elif signal == 1:
-                redLightOn()
-            elif signal == 2:
-                sleep(1)
 
-#check validity of string
-def checkString(word):
-    while condition == True:
-        if(word.isalpha()):
-            return True
-        else:
-            return False
+# check validity of string
+def checkString(word: str):
+    if word.isalpha():
+        return True
+    else:
+        return False
 
-#LED functions
-def greenLightOn():       # 0 --> short;
+
+# LED functions
+def short():  # 0 --> short;
     print("Green on!")
     led_green.value(1)
     sleep(0.1)
     led_green.value(0)
     sleep(0.2)
 
-def redLightOn():         # 1-->long
+
+def long():  # 1-->long
     print("Red on!")
     led_red.value(1)
     sleep(0.5)
     led_red.value(0)
     sleep(0.2)
 
-#init LED
+def wait():
+    sleep(1)
+
+
+def lightError():
+    led_red.value(1)
+    sleep(3)
+    led_red.value(0)
+
+
+# init LED
 led_red = Pin(14, Pin.OUT)
 led_green = Pin(15, Pin.OUT)
 condition = True
 
-#init Dict
-letters: dict =    {"A": [0,1], "B": [1,0,0,0], "C": [1,0,1,0], "D": [1,0,0], "E": [0], "F": [0,0,1,0], "G": [1,1,0],
-                    "H": [0,0,0,0], "I": [0,0], "J": [0,1,1,1], "K": [1,0,1], "L": [0,1,0,0], "M": [1,1], "N": [1,0],
-                    "O": [1,1,1], "P": [0,1,1,0], "Q": [1,1,0,1], "R": [0,1,0], "S": [0,0,0], "T": [1], "U": [0,0,1],
-                    "V": [0,0,0,1], "W": [0,1,1], "X": [1,0,0,1], "Y": [1,0,1,1], "Z": [1,1,0,0], " ": [2],
-                    "Ä": [0,1,0,1], "Ö": [0,0,0,1], "Ü": [0,0,1,1]}
+# init Dict
+letters: dict = {
+    "A": [short, long],
+    "B": [long, short, short, short],
+    "C": [long, short, long, short],
+    "D": [long, short, short],
+    "E": [short],
+    "F": [short, short, long, short],
+    "G": [long, long, short],
+    "H": [short, short, short, short],
+    "I": [short, short],
+    "J": [short, long, long, long],
+    "K": [long, short, long],
+    "L": [short, long, short, short],
+    "M": [long, long],
+    "N": [long, short],
+    "O": [long, long, long],
+    "P": [short, long, long, short],
+    "Q": [long, long, short, long],
+    "R": [short, long, short],
+    "S": [short, short, short],
+    "T": [long],
+    "U": [short, short, long],
+    "V": [short, short, short, long],
+    "W": [short, long, long],
+    "X": [long, short, short, long],
+    "Y": [long, short, long, long],
+    "Z": [long, long, short, short],
+    "Ä": [short, long, short, long],
+    "Ö": [short, short, short, long],
+    "Ü": [short, short, long, long],
+    " ": [wait],
+}
 
-#constants for web - interface
-SSID = 'WAP-Morsecode'
-PASS = 'PicoPi123'
+# constants for web - interface
+SSID = "WAP-Morsecode"
+PASS = "PicoPi123"
 PORT = 80
 WEBSITE = """<!DOCTYPE html>
 <html>
@@ -76,55 +106,64 @@ WEBSITE = """<!DOCTYPE html>
 </html>
 """
 
-#configure WAP
-wap = network.WLAN(network.AP_IF) 
+# configure WAP
+wap = network.WLAN(network.AP_IF)
 wap.config(essid=SSID, password=PASS)
 wap.active(True)
 
-ip=wap.ifconfig()[0]
+ip = wap.ifconfig()[0]
 
-#give user IP and PORT (to enter in Browser and access UI)
+# give user IP and PORT (to enter in Browser and access UI)
 print("IP-Address: " + str(ip))
 print("Port: " + str(PORT))
 
-#init Socket
+# init Socket
 sock = socket.socket()
 sock.bind((ip, PORT))
 sock.listen()
 
-#init UI-vars
-lastText="NONE"
-lastValid=False
+# init UI-vars
+lastText = ""
+lastValid = False
 
-#init Pins
+# init Pins
 while True:
     try:
         conn, addr = sock.accept()
         print("Connected to: " + str(addr))
     except socket.error:
-        print('Socket error, exiting.')
+        print("Socket error, exiting.")
         break
     try:
         request = conn.recv(1024)
         reqText = str(request)
-        #if input is submitted (else the find returns -1)
-        if (reqText.find("/?input=")+1):
-            #extract the input from recieved
-            tempText = reqText[(reqText.find("/?input=")+9):(reqText.find(" HTTP/1.1"))]
-            #a bit of manipulation (no spaces... implemented)
-            lastValid=checkString(tempText)
+        # if input is submitted (else the find returns -1)
+        if reqText.find("/?input=") + 1:
+            # extract the input from recieved
+            tempText = reqText[
+                (reqText.find("/?input=") + 9) : (reqText.find(" HTTP/1.1"))
+            ]
+            # a bit of manipulation (no spaces... implemented)
+            check_tempText = tempText.replace(" ", "")
+            lastValid = checkString(check_tempText)
             if lastValid:
-                lastText=tempText.upper()
-                lastText = lastText.replace(" ","")
-        #formatting website
+                lastText = tempText.upper()
+            else:
+                lastText = ""
+
+        # formatting website
         html = WEBSITE % (str(lastValid), lastText)
 
-        conn.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n') #HTTP status line and header
+        conn.send(
+            "HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n"
+        )  # HTTP status line and header
         conn.send(html)
         conn.close()
-        #the LAST VALID text is morsed 
-        morseOutput(lastText)
+        # the LAST VALID text is morsed
+        if lastValid:
+            morseOutput(lastText)
+        else:
+            lightError()
     except OSError:
         conn.close()
-        print('Error occured')                                              
-
+        print("Error occured")
