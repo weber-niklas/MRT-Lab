@@ -53,11 +53,7 @@ led_red = Pin(14, Pin.OUT)
 led_green = Pin(15, Pin.OUT)
 button = Pin(16, Pin.IN)
 
-def handle_interrupt(pin):
-    print("Exiting")
-    sys.exit()
 
-button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
 
 # init Dict
 letters: dict = {
@@ -112,73 +108,84 @@ WEBSITE = """<!DOCTYPE html>
 </html>
 """
 
-# configure WAP
-wap = network.WLAN(network.AP_IF)
-wap.config(essid=SSID, password=PASS)
-wap.active(True)
 
-ip = wap.ifconfig()[0]
+def main():
+    # configure WAP
+    wap = network.WLAN(network.AP_IF)
+    wap.config(essid=SSID, password=PASS)
+    wap.active(True)
 
-# give user IP and PORT (to enter in Browser and access UI)
-print("IP-Address: " + str(ip))
-print("Port: " + str(PORT))
+    ip = wap.ifconfig()[0]
 
-# init Socket
-sock = socket.socket()
-sock.bind((ip, PORT))
-sock.listen()
+    # give user IP and PORT (to enter in Browser and access UI)
+    print("IP-Address: " + str(ip))
+    print("Port: " + str(PORT))
 
-# init UI-vars
-lastText = ""
-lastValid = False
+    # init Socket
+    sock = socket.socket()
+    sock.bind((ip, PORT))
+    sock.listen()
 
-# init Pins
-while True:
-    try:
-        conn, addr = sock.accept()
-        print("Connected to: " + str(addr))
-    except socket.error:
-        print("Socket error, exiting.")
-        break
-    try:
-        request = conn.recv(1024)
-        reqText = str(request)
+    # init UI-vars
+    lastText = ""
+    lastValid = False
+    while True:
+        try:
+            conn, addr = sock.accept()
+            print("Connected to: " + str(addr))
+        except socket.error:
+            print("Socket error, exiting.")
+            break
+        try:
+            request = conn.recv(1024)
+            reqText = str(request)
 
-        # if input is submitted (else the find returns -1)
-        if reqText.find("/?input=") + 1:
+            # if input is submitted (else the find returns -1)
+            if reqText.find("/?input=") + 1:
 
-            # extract the input from recieved
-            tempText = reqText[
-                (reqText.find("/?input=") + 9) : (reqText.find(" HTTP/1.1"))
-            ]
+                # extract the input from recieved
+                tempText = reqText[
+                    (reqText.find("/?input=") + 9) : (reqText.find(" HTTP/1.1"))
+                ]
 
-            # a bit of manipulation (no spaces... implemented)
-            check_tempText = tempText.replace("+", "")
-            print(check_tempText)
-            lastValid = checkString(check_tempText)
-            print(lastValid)
+                # a bit of manipulation (no spaces... implemented)
+                check_tempText = tempText.replace("+", "")
+                print(check_tempText)
+                lastValid = checkString(check_tempText)
+                print(lastValid)
 
+                if lastValid:
+                    lastText = lastText.replace("+", " ")
+                    lastText = tempText.upper()
+                else:
+                    lastText = ""
+
+            # formatting website
+            html = WEBSITE % (str(lastValid), lastText)
+
+            conn.send(
+                "HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n"
+            )  # HTTP status line and header
+            conn.send(html)
+            conn.close()
+            
+            # the LAST VALID text is morsed
             if lastValid:
-                lastText = lastText.replace("+", " ")
-                lastText = tempText.upper()
+                morseOutput(lastText)
             else:
-                lastText = ""
+                lightError()
 
-        # formatting website
-        html = WEBSITE % (str(lastValid), lastText)
+        except OSError:
+            conn.close()
+            print("Error occured")
 
-        conn.send(
-            "HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n"
-        )  # HTTP status line and header
-        conn.send(html)
-        conn.close()
-        
-        # the LAST VALID text is morsed
-        if lastValid:
-            morseOutput(lastText)
-        else:
-            lightError()
+executing = False
 
-    except OSError:
-        conn.close()
-        print("Error occured")
+def handle_interrupt(pin):
+    global executing
+    executing = not executing
+
+    if executing:
+        main()
+
+button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
