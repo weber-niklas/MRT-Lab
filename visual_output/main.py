@@ -5,9 +5,31 @@ Pico - Morse Code
 
 from time import sleep
 from machine import Pin
-import network, socket
+import network
+from socket import Socket
 import sys
 
+
+def setup():
+    wap = network.WLAN(network.AP_IF)
+    wap.config(essid=SSID, password=PASS)
+    wap.active(True)
+
+    ip = wap.ifconfig()[0]
+
+    # give user IP and PORT (to enter in Browser and access UI)
+    print("IP-Address: " + str(ip))
+    print("Port: " + str(PORT))
+
+    # init Socket
+    sock = socket.socket()
+    sock.bind((ip, PORT))
+    sock.open()
+    print(sock)
+    return sock
+
+
+    
 # morse function
 def morseOutput(word):
     for char in word:
@@ -25,7 +47,6 @@ def checkString(word: str):
 
 # LED functions
 def short():  # 0 --> short;
-    print("Green on!")
     led_green.value(1)
     sleep(0.1)
     led_green.value(0)
@@ -33,7 +54,6 @@ def short():  # 0 --> short;
 
 
 def long():  # 1-->long
-    print("Red on!")
     led_red.value(1)
     sleep(0.5)
     led_red.value(0)
@@ -109,27 +129,11 @@ WEBSITE = """<!DOCTYPE html>
 """
 
 
-wap = network.WLAN(network.AP_IF)
-wap.config(essid=SSID, password=PASS)
-
-ip = wap.ifconfig()[0]
-
-# give user IP and PORT (to enter in Browser and access UI)
-print("IP-Address: " + str(ip))
-print("Port: " + str(PORT))
-
-# init Socket
-sock = socket.socket()
-sock.bind((ip, PORT))
 
 def main():
     # init UI-vars
     lastText = ""
     lastValid = False
-
-    # configure WAP
-    wap.active(True)
-    sock.listen()
 
     while True:
         try:
@@ -183,15 +187,24 @@ def main():
 
 executing = False
 
-def handle_interrupt(pin):
+def handle_interrupt(pin,sock):
     global executing
     executing = not executing
 
     if executing:
+        print(sock)
+        #sock.open()
+        sock.listen()
         main()
+        print('main()')
     else:
-        wap.active(False)
+        sock.detach()
+        print('wap not active')
 
-button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
-while True:
-    sleep(0.001)
+if __name__ == "__main__":
+    sock = setup()
+
+    button.irq(trigger=Pin.IRQ_RISING, handler=lambda pin=None, sock=sock:handle_interrupt(pin,sock))
+
+    while True:
+        sleep(0.001)
