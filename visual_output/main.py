@@ -8,7 +8,7 @@ from machine import Pin
 import network
 import socket
 
-    
+
 # morse function
 def morse_output(word):
     for char in word:
@@ -38,6 +38,7 @@ def long():  # 1-->long
     led_red.value(0)
     sleep(0.2)
 
+
 def wait():
     sleep(1)
 
@@ -46,7 +47,6 @@ def wait():
 led_red = Pin(14, Pin.OUT)
 led_green = Pin(15, Pin.OUT)
 button = Pin(16, Pin.IN)
-
 
 
 # init Dict
@@ -128,8 +128,8 @@ executing = False
 def main():
 
     input_valid_display = {
-        True: "<font color=\"#44CA3B\"> Yes </font>",
-        False: "<font color=\"#EE441A\"> No </font>",
+        True: '<font color="#44CA3B"> Yes </font>',
+        False: '<font color="#EE441A"> No </font>',
     }
     # init UI-vars
     last_user_input = ""
@@ -141,7 +141,6 @@ def main():
         conn, addr = sock.accept()
         print("Connected to: " + str(addr))
 
-            
         try:
             request = conn.recv(1024)
             req_text = str(request)
@@ -166,15 +165,23 @@ def main():
 
             # formatting website
             if executing:
-                html = WEBSITE % (f"<font color=\"green\"><b>available</b></font>", input_valid_display[last_input_valid], last_user_input)
+                html = WEBSITE % (
+                    f'<font color="green"><b>available</b></font>',
+                    input_valid_display[last_input_valid],
+                    last_user_input,
+                )
             else:
-                html = WEBSITE % (f"<font color=\"firebrick\"><b>unavailable</b></font>", input_valid_display[last_input_valid], last_user_input)
+                html = WEBSITE % (
+                    f'<font color="firebrick"><b>unavailable</b></font>',
+                    input_valid_display[last_input_valid],
+                    last_user_input,
+                )
 
             conn.send(
                 "HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n"
             )  # HTTP status line and header
             conn.send(html)
-            conn.close()                    
+            conn.close()
 
             if executing and last_input_valid:
                 morse_output(morse_input)
@@ -183,18 +190,22 @@ def main():
             conn.close()
             print("Error occured")
 
+
 last_interrupt = time()
+
+
 def handle_interrupt(pin):
     global last_interrupt
     current_time = time()
     print(f"Difference: {current_time-last_interrupt}")
-    if current_time-last_interrupt >= 2:
+    if current_time - last_interrupt >= 2:
         last_interrupt = current_time
         print(f"last_interrupt: {last_interrupt}")
 
         global executing
         executing = not executing
         print(f"Executing: {executing}")
+
 
 wap = network.WLAN(network.AP_IF)
 wap.config(essid=SSID, password=PASS)
