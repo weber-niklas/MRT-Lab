@@ -41,11 +41,6 @@ def long():  # 1-->long
 def wait():
     sleep(1)
 
-def lightError():
-    led_red.value(1)
-    sleep(3)
-    led_red.value(0)
-
 
 # init LED
 led_red = Pin(14, Pin.OUT)
@@ -111,12 +106,15 @@ body {
 <div id="center">
 <h2>MorseCode Converter</h2>
 <form>
+  <center>
   <label> Service currently %s</label><br> 
   <label>Was last input valid? %s</label><br>
   <label>Last entered text: %s</label><br>
+  <br/>
   <label>Enter text:</label><br>
   <input type="text" id="input" name="input" value=" "><br>
   <input type="submit" value="Submit">
+  </center>
 </form>
 </div>
 </body>
@@ -131,10 +129,11 @@ def main():
 
     input_valid_display = {
         True: "<font color=\"#44CA3B\"> Yes </font>",
-        False: "<font color=\"#F88801\"> No </font>",
+        False: "<font color=\"#EE441A\"> No </font>",
     }
     # init UI-vars
     last_user_input = ""
+    morse_output = ""
     last_input_valid = False
 
     while True:
@@ -162,8 +161,6 @@ def main():
                 if last_input_valid:
                     last_user_input = last_user_input.replace("+", " ")
                     morse_output = last_user_input.upper()
-                    if executing:
-                        morseOutput(morse_output)
                 else:
                     last_user_input = ""
 
@@ -178,6 +175,9 @@ def main():
             )  # HTTP status line and header
             conn.send(html)
             conn.close()                    
+
+            if executing and last_input_valid:
+                morseOutput(morse_output)
 
         except OSError:
             conn.close()
