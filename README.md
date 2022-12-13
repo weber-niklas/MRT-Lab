@@ -27,7 +27,8 @@ Der Taster zum Sarten des Programmes wurde mit einem Pull-Down Widerstand bescha
 
 ### Software
 #### Netzwerkkommunikation
-Die Netzwerkaspekte wurden mit den Modulen `network` und `socket` realisiert. Nach Initialisierung einiger Konstanten (wie SSID des WLAN-Netzes), wird mit `network.WLAN()`
+Die Netzwerkaspekte wurden mit den Modulen `network` und `socket` realisiert. Nach Initialisierung einiger Konstanten (wie SSID des WLAN-Netzes), wird mit `network.WLAN()` ein interface-Objekt erzeugt. Dieses wird anschließend mit vorher spezifizierten Konstanten ('SSID' und 'PASS') belegt und aktiviert.
+Nun muss die IPv4-Adresse dieses interfaces extrahiert werden (`ifconfig()`), um diese auszugeben. Außerdem wird mit diese IP-Adresse der anchließend kreierten Socket zugeordnet. Nachdem die S
 #### Eingabe, Stringmanipulation und Ausgabe des Morsecodes
 Die Weboberfläche ist mit HTML und CSS realisiert. Klickt der Benutzer in der Weboberfläche auf 'Submit' werden auf der Socket mit `.recv()` bytes empfangen. Die empfangenen Daten werden zu einem String konvertiert und in Python weiter bearbeitet. Anschließend wird der Empfangene String auf Daten gescannt. Da dieser String immer die selbe Struktur hat, bietet es sich an, nach bestimmten Sequenzen zu scannen (`.find()`) und an entsprechender Stelle zu schneiden `newString=oldString[start index: stop index]`.
 Anschließend wird die Methode `check_string()` aufgerufen. Dort wird zunächst im übergebenen String '+' (wegen URL-Encoding) mit '' ersetzt. Danach wird geprüft, ob der String nur erlaubte Zeichen erhält und nicht leer ist (`isalpha(), len()`). Auf Basis dessen erfolgt die Ausgabe. Ist der String gültig, so erfolgt die Ausgabe des Textes, der vorher mit `.uppper()` in Caps überführt wird. 
