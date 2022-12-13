@@ -1,5 +1,6 @@
 """
 Pico - Morse Code
+    wireless solution
     - web-parts inspired by code shown in lecture
 """
 
@@ -9,14 +10,14 @@ import network
 import socket
 
 
-# morse function
+# output: looping over string, looping over output-function-array
 def morse_output(word):
     for char in word:
         for signal in letters[char]:
             signal()
 
 
-# check validity of string
+# check if string is only consisting of letters or spaces
 def check_string(user_input: str):
     user_input=user_input.replace("+","")
     if user_input.isalpha() or len(user_input) == 0:
@@ -25,7 +26,7 @@ def check_string(user_input: str):
         return False
 
 
-# LED functions
+# LED functions for output
 def short():  # 0 --> short;
     led_green.value(1)
     sleep(0.1)
@@ -81,7 +82,7 @@ letters: dict = {
     " ": [wait],
 }
 
-# constants for web - interface
+# constants for web interface
 SSID = "WAP-Morsecode"
 PASS = "PicoPi123"
 PORT = 80
@@ -119,12 +120,12 @@ body {
 </html>
 """
 
-
+# init global variable for execution state (set by hardware button)
 executing = False
 
-
+# creating website, asking for user input
 def main():
-
+    # colors change if input was not valid
     input_valid_display = {
         True: '<font color="#44CA3B"> Yes </font>',
         False: '<font color="#EE441A"> No </font>',
@@ -134,10 +135,10 @@ def main():
     morse_input = ""
     last_input_valid = False
 
+    # main loop - waiting for connection, checking input, output
     while True:
 
         conn, addr = sock.accept()
-        print("Connected to: " + str(addr))
 
         try:
             request = conn.recv(1024)
@@ -151,18 +152,16 @@ def main():
                     (req_text.find("/?input=") + 9) : (req_text.find(" HTTP/1.1"))
                 ]
 
-                # a bit of manipulation (no spaces... implemented)
-                print(last_user_input)
                 last_input_valid = check_string(last_user_input)
                 
-
+                # only output when input was valid
                 if last_input_valid:
                     last_user_input = last_user_input.replace("+", " ")
                     morse_input = last_user_input.upper()
                 else:
                     last_user_input = ""
 
-            # formatting website
+            # formatting website (changing colors dependend on hardware button press)
             if executing:
                 html = WEBSITE % (
                     f'<font color="green"><b>available</b></font>',
@@ -175,13 +174,14 @@ def main():
                     input_valid_display[last_input_valid],
                     last_user_input,
                 )
-
+            # HTTP status line and header
             conn.send(
                 "HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n"
-            )  # HTTP status line and header
+            )  
             conn.send(html)
             conn.close()
 
+            # outputting morse signal
             if executing and last_input_valid:
                 morse_output(morse_input)
 
@@ -189,27 +189,26 @@ def main():
             conn.close()
             print("Error occured")
 
-
+#save time stamp of last interrupt (button is oszillating)
 last_interrupt = time()
 
 
 def handle_interrupt(pin):
     global last_interrupt
     current_time = time()
-    print(f"Difference: {current_time-last_interrupt}")
+    #checking for minimum time difference (prevent double clicks, oszillating)
     if current_time - last_interrupt >= 2:
         last_interrupt = current_time
-        print(f"last_interrupt: {last_interrupt}")
-
         global executing
+        #inverting executing
         executing = not executing
-        print(f"Executing: {executing}")
 
-
+# interface object creation
 wap = network.WLAN(network.AP_IF)
 wap.config(essid=SSID, password=PASS)
 wap.active(True)
 
+#saving ip for socket
 ip = wap.ifconfig()[0]
 
 # give user IP and PORT (to enter in Browser and access UI)
@@ -220,9 +219,9 @@ print("Port: " + str(PORT))
 sock = socket.socket()
 sock.bind((ip, PORT))
 sock.listen()
-print(sock)
 
-if __name__ == "__main__":
-    button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
+#setting up interrupt
+button.irq(trigger=Pin.IRQ_RISING, handler=handle_interrupt)
 
-    main()
+#starting to wait for input
+main()
