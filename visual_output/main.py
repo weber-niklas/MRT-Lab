@@ -17,8 +17,8 @@ def morseOutput(word):
 
 
 # check validity of string
-def checkString(word: str):
-    if word.isalpha():
+def checkString(user_input: str):
+    if user_input.isalpha() or len(user_input) == 0:
         return True
     else:
         return False
@@ -130,8 +130,8 @@ executing = False
 def main():
 
     input_valid_display = {
-        True: "<font color=\"#44CA3B\"Yes</font>",
-        False: "<font color=\"#F88801\"No</font>",
+        True: "<font color=\"#44CA3B\"> Yes </font>",
+        False: "<font color=\"#F88801\"> No </font>",
     }
     # init UI-vars
     last_user_input = ""
