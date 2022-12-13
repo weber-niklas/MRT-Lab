@@ -38,9 +38,11 @@ Ein Problem stellte das Modul `socket` dar. Dieses ist in Micro-Python nicht in 
 Ein weiteres Problem stellte der Interrupt-Handler dar. Zunächst wurde probiert die Socket direkt aus dem interrupt zu schließen.
 
 <details><summary> Versuchter Ansatz </summary>
-  
-
-  
+ Damit dem Handler Argumente übergeben werden konnten, musste dieser mit einer `lambda`-Funktion gewrappt werden.
+```python
+.irq(..., handler=lambda pin=pin, sock=sock: handle_interrupt(pin, sock))
+```
+Dieser Ansatz ist fehlgeschlagen, da der Handler nicht für so hohe Abstraktionsebenen (sockets) gedacht ist. Deshalb wurde das Problem mithilfe von globalen Variablen gelöst.
 </details>
 
 
