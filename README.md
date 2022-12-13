@@ -25,7 +25,7 @@ An dieser Stelle wurde die Aufgabenstellung leicht **modifiziert**. Der Pi wurde
 Das Programm ist in der Lage über eine Weboberfläche anzuzeigen, ob gerade gemorst werden kann (dies kann durch den Button aktiviert werden). Über ebendiese Oberfläche wird eine Eingabe entgegengenommen und der Nutzer gewarnt, falls die Eingabe nicht gültig war. Eine Eingabe kann als Morsecode über zwei LEDs ausgegeben werden.
 ### Hardware
 Für die Realisierung der Hardware wurden zwei LEDs mit einem Vorwiderstand auf einen Output-Pin geschaltet. Sollen die LEDs eingeschaltet werden, wird der Pin auf 1 (ca. 3 V) gesetzt. Die LED leuchtet.
-Der Taster zum Sarten des Programmes wurde mit einem Pull-Down Widerstand beschaltet. Generell liegt also eine 0 (0V) am Input-Pin an. Wird der Button betätigt, ändert sich das Potenzial zu einer 1 (ca. 3 V). Dafür wurde ein 10k Widerstand verwendet, um den Pi nicht mit zu hohen Strömen zu belasten. 
+Der Taster zum Starten des Programmes wurde mit einem Pull-Down Widerstand beschaltet. Generell liegt also eine 0 (0V) am Input-Pin an. Wird der Button betätigt, ändert sich das Potenzial zu einer 1 (ca. 3 V). Dafür wurde ein 10k Widerstand verwendet, um den Pi nicht mit zu hohen Strömen zu belasten. 
 
 ### Software
 #### Netzwerkkommunikation
