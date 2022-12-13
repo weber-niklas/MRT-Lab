@@ -7,7 +7,6 @@ from time import sleep, time
 from machine import Pin
 import network
 import socket
-import sys
 
     
 # morse function
@@ -109,15 +108,17 @@ body {
 </style>
 </head>
 <body id="parent">
-<h2>MorseCode - Input</h2>
+<div id="center">
+<h2>MorseCode Converter</h2>
 <form>
   <label> Service currently %s</label><br> 
-  <label>Was last text valid Input? %s</label><br>
+  <label>Was last input valid? %s</label><br>
   <label>Last entered text: %s</label><br>
   <label>Enter text:</label><br>
   <input type="text" id="input" name="input" value=" "><br>
   <input type="submit" value="Submit">
 </form>
+</div>
 </body>
 </html>
 """
@@ -125,10 +126,16 @@ body {
 
 executing = False
 
+
 def main():
+
+    input_valid_display = {
+        True: "<font color=\"#44CA3B\"Yes</font>",
+        False: "<font color=\"#F88801\"No</font>",
+    }
     # init UI-vars
-    lastText = ""
-    lastValid = False
+    last_user_input = ""
+    last_input_valid = False
 
     while True:
 
@@ -138,42 +145,39 @@ def main():
             
         try:
             request = conn.recv(1024)
-            reqText = str(request)
+            req_text = str(request)
 
             # if input is submitted (else the find returns -1)
-            if reqText.find("/?input=") + 1:
+            if req_text.find("/?input=") + 1:
 
                 # extract the input from recieved
-                tempText = reqText[
-                    (reqText.find("/?input=") + 9) : (reqText.find(" HTTP/1.1"))
+                last_user_input = req_text[
+                    (req_text.find("/?input=") + 9) : (req_text.find(" HTTP/1.1"))
                 ]
 
                 # a bit of manipulation (no spaces... implemented)
-                check_tempText = tempText.replace("+", "")
-                lastValid = checkString(check_tempText)
+                temp_check = last_user_input.replace("+", "")
+                last_input_valid = checkString(temp_check)
 
-                if lastValid:
-                    lastText = tempText.replace("+", " ")
-                    lastText = lastText.upper()
+                if last_input_valid:
+                    last_user_input = last_user_input.replace("+", " ")
+                    morse_output = last_user_input.upper()
+                    if executing:
+                        morseOutput(morse_output)
                 else:
-                    lastText = ""
+                    last_user_input = ""
 
             # formatting website
             if executing:
-                html = WEBSITE % (f"<font color=\"green\"><b>available</b></font>", str(lastValid), lastText)
+                html = WEBSITE % (f"<font color=\"green\"><b>available</b></font>", input_valid_display[last_input_valid], last_user_input)
             else:
-                html = WEBSITE % (f"<font color=\"firebrick\"><b>unavailable</b></font>", str(lastValid), lastText)
+                html = WEBSITE % (f"<font color=\"firebrick\"><b>unavailable</b></font>", input_valid_display[last_input_valid], last_user_input)
 
             conn.send(
                 "HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n"
             )  # HTTP status line and header
             conn.send(html)
-            conn.close()
-            
-            # the LAST VALID text is morsed
-            if lastValid and executing:
-                morseOutput(lastText)                
-                
+            conn.close()                    
 
         except OSError:
             conn.close()
