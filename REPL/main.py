@@ -1,5 +1,6 @@
 """
 Pico - Morse Code
+    REPL solution
 """
 
 from time import sleep
