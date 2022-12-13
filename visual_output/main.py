@@ -18,7 +18,7 @@ def morse_output(word):
 
 # check validity of string
 def check_string(user_input: str):
-    user_input=user_input.replace("ü","").replace("ä","").replace("ö","").replace("+","")
+    user_input=user_input.replace("+","")
     if user_input.isalpha() or len(user_input) == 0:
         return True
     else:
@@ -152,7 +152,9 @@ def main():
                 ]
 
                 # a bit of manipulation (no spaces... implemented)
+                print(last_user_input)
                 last_input_valid = check_string(last_user_input)
+                
 
                 if last_input_valid:
                     last_user_input = last_user_input.replace("+", " ")
