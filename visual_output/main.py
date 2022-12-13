@@ -17,7 +17,8 @@ def morse_output(word):
 
 
 # check validity of string
-def chek_string(user_input: str):
+def check_string(user_input: str):
+    user_input=user_input.replace("ü","").replace("ä","").replace("ö","").replace("+","")
     if user_input.isalpha() or len(user_input) == 0:
         return True
     else:
@@ -77,9 +78,6 @@ letters: dict = {
     "X": [long, short, short, long],
     "Y": [long, short, long, long],
     "Z": [long, long, short, short],
-    "Ä": [short, long, short, long],
-    "Ö": [short, short, short, long],
-    "Ü": [short, short, long, long],
     " ": [wait],
 }
 
@@ -154,8 +152,7 @@ def main():
                 ]
 
                 # a bit of manipulation (no spaces... implemented)
-                temp_check = last_user_input.replace("+", "")
-                last_input_valid = chek_string(temp_check)
+                last_input_valid = check_string(last_user_input)
 
                 if last_input_valid:
                     last_user_input = last_user_input.replace("+", " ")
