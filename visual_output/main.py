@@ -10,14 +10,14 @@ import socket
 
     
 # morse function
-def morseOutput(word):
+def morse_output(word):
     for char in word:
         for signal in letters[char]:
             signal()
 
 
 # check validity of string
-def checkString(user_input: str):
+def chek_string(user_input: str):
     if user_input.isalpha() or len(user_input) == 0:
         return True
     else:
@@ -133,7 +133,7 @@ def main():
     }
     # init UI-vars
     last_user_input = ""
-    morse_output = ""
+    morse_input = ""
     last_input_valid = False
 
     while True:
@@ -156,11 +156,11 @@ def main():
 
                 # a bit of manipulation (no spaces... implemented)
                 temp_check = last_user_input.replace("+", "")
-                last_input_valid = checkString(temp_check)
+                last_input_valid = chek_string(temp_check)
 
                 if last_input_valid:
                     last_user_input = last_user_input.replace("+", " ")
-                    morse_output = last_user_input.upper()
+                    morse_input = last_user_input.upper()
                 else:
                     last_user_input = ""
 
@@ -177,7 +177,7 @@ def main():
             conn.close()                    
 
             if executing and last_input_valid:
-                morseOutput(morse_output)
+                morse_output(morse_input)
 
         except OSError:
             conn.close()
